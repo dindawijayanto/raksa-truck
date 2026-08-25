@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, BrainCircuit, LoaderCircle, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react';
 import Card from '../ui/Card';
-import { predictModelBScenario } from '../../lib/modelBApi';
+import { ModelBApiError, predictModelBScenario } from '../../lib/modelBApi';
 
 const initialScenario = {
   truck_tare_kg: 6000,
@@ -14,6 +14,16 @@ const initialScenario = {
   tire_pressure_ratio: 1,
   trip_distance_km: 85,
   cumulative_wear_pct: 28,
+};
+
+const highRiskDemoScenario = {
+  ...initialScenario,
+  payload_kg: 11000,
+  road_iri_m_per_km: 5.5,
+  speed_kmh: 89,
+  tire_pressure_ratio: 0.85,
+  trip_distance_km: 180,
+  cumulative_wear_pct: 90,
 };
 
 const numberFields = [
@@ -44,7 +54,7 @@ export default function ModelBScenario({ onPrediction }) {
   const [scenario, setScenario] = useState(initialScenario);
   const [prediction, setPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
   const updateNumber = (name, value) => {
     // Keep the text the user is actively editing. Coercing an empty input to
@@ -69,7 +79,10 @@ export default function ModelBScenario({ onPrediction }) {
       setPrediction(result);
       onPrediction?.(result);
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Terjadi kesalahan saat memanggil model.');
+      setError({
+        message: requestError instanceof Error ? requestError.message : 'Terjadi kesalahan saat memanggil model.',
+        type: requestError instanceof ModelBApiError && requestError.status === 422 ? 'validation' : 'connection',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +97,14 @@ export default function ModelBScenario({ onPrediction }) {
     await requestPrediction(payload);
   };
 
+  const runHighRiskDemo = async () => {
+    setScenario({ ...highRiskDemoScenario });
+    await requestPrediction(highRiskDemoScenario);
+  };
+
+  const payloadCapacityKg = Math.max(Number(scenario.gross_weight_limit_kg) - Number(scenario.truck_tare_kg), 0);
+  const benchmarkPayloadLimitKg = payloadCapacityKg * 1.1;
+
   return (
     <Card className="mb-6 border border-blue-100 bg-gradient-to-br from-white via-white to-blue-50/60">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -97,15 +118,26 @@ export default function ModelBScenario({ onPrediction }) {
             Masukkan konteks truk dan rute. Panel ini memanggil weight CatBoost yang di-deploy dari benchmark Model B.
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
-          <ShieldAlert size={14} /> Simulation only
-        </span>
+        <div className="flex flex-wrap items-center gap-2 self-start">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
+            <ShieldAlert size={14} /> Simulation only
+          </span>
+          <button
+            className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 transition hover:bg-rose-100 disabled:cursor-wait disabled:opacity-60"
+            type="button"
+            onClick={runHighRiskDemo}
+            disabled={isLoading}
+          >
+            Demo risiko tinggi
+          </button>
+        </div>
       </div>
 
       <form className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5" onSubmit={handleSubmit}>
         {numberFields.map(([name, label, unit, step]) => (
           <label key={name} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
             <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</span>
+            {name === 'payload_kg' ? <span className="mt-0.5 block text-[10px] text-slate-400">Batas benchmark: {formatNumber(benchmarkPayloadLimitKg)} kg</span> : null}
             <div className="mt-1 flex items-center gap-1">
               <input
                 className="min-w-0 w-full bg-transparent text-sm font-bold text-slate-800 outline-none"
@@ -149,9 +181,13 @@ export default function ModelBScenario({ onPrediction }) {
         <div className="mt-5 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800" role="alert">
           <AlertTriangle className="mt-0.5 shrink-0" size={18} />
           <div>
-            <p className="font-bold">Model API belum dapat dihubungi</p>
-            <p className="mt-1 text-rose-700">{error}</p>
-            <p className="mt-1 text-xs text-rose-600">Jalankan backend pada port 8000 atau atur `VITE_MODEL_API_URL`.</p>
+            <p className="font-bold">{error.type === 'validation' ? 'Input skenario di luar rentang benchmark' : 'Model API belum dapat dihubungi'}</p>
+            <p className="mt-1 text-rose-700">{error.message}</p>
+            {error.type === 'validation' ? (
+              <p className="mt-1 text-xs text-rose-600">Dengan berat kosong dan batas berat kotor saat ini, muatan maksimum untuk benchmark adalah {formatNumber(benchmarkPayloadLimitKg)} kg (110% kapasitas payload).</p>
+            ) : (
+              <p className="mt-1 text-xs text-rose-600">Jalankan backend pada port 8000 atau atur `VITE_MODEL_API_URL`.</p>
+            )}
           </div>
         </div>
       ) : null}
