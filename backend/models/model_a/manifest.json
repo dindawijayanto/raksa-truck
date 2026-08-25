@@ -1,0 +1,59 @@
+{
+  "model_type": "session_relative_roughness",
+  "artifact_format": "joblib",
+  "comparability": "Scores are valid within a session; do not rank across devices or vehicles.",
+  "sessions": [
+    {
+      "session_id": "20260811_131526_089",
+      "artifact": "roughness_20260811_131526_089.joblib",
+      "sampling_hz": null,
+      "reference_speed_kmh": 33.78299337120306,
+      "features": [
+        "rms_vertical",
+        "p95_abs",
+        "vdv_per_m",
+        "psd_0_5_3hz",
+        "psd_3_15hz"
+      ]
+    },
+    {
+      "session_id": "20260811_182606_294",
+      "artifact": "roughness_20260811_182606_294.joblib",
+      "sampling_hz": null,
+      "reference_speed_kmh": 22.247564972336527,
+      "features": [
+        "rms_vertical",
+        "p95_abs",
+        "vdv_per_m",
+        "psd_0_5_3hz",
+        "psd_3_15hz"
+      ]
+    },
+    {
+      "session_id": "20260811_212352_867",
+      "artifact": "roughness_20260811_212352_867.joblib",
+      "sampling_hz": null,
+      "reference_speed_kmh": 34.66883965361865,
+      "features": [
+        "rms_vertical",
+        "p95_abs",
+        "vdv_per_m",
+        "psd_0_5_3hz",
+        "psd_3_15hz"
+      ]
+    },
+    {
+      "session_id": "20260811_224202_660",
+      "artifact": "roughness_20260811_224202_660.joblib",
+      "sampling_hz": null,
+      "reference_speed_kmh": 35.66225022774848,
+      "features": [
+        "rms_vertical",
+        "p95_abs",
+        "vdv_per_m",
+        "psd_0_5_3hz",
+        "psd_3_15hz"
+      ]
+    }
+  ]
+}

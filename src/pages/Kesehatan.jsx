@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Header from '../components/layout/Header';
 import HealthSidebar from '../components/health/HealthSidebar';
 import HealthDetails from '../components/health/HealthDetails';
@@ -5,6 +6,8 @@ import HealthBottom from '../components/health/HealthBottom';
 import ModelBScenario from '../components/health/ModelBScenario';
 
 export default function Kesehatan() {
+  const [modelBPrediction, setModelBPrediction] = useState(null);
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-12">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,22 +22,22 @@ export default function Kesehatan() {
             </p>
           </div>
 
-          <ModelBScenario />
+          <ModelBScenario onPrediction={setModelBPrediction} />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Sidebar Kiri (Ambil 4 Kolom) */}
             <aside className="lg:col-span-4">
-              <HealthSidebar />
+              <HealthSidebar prediction={modelBPrediction} />
             </aside>
 
             {/* Konten Kanan (Ambil 8 Kolom) */}
             <section className="lg:col-span-8">
-              <HealthDetails />
+              <HealthDetails prediction={modelBPrediction} />
             </section>
           </div>
 
           {/* Bagian Bawah */}
-          <HealthBottom />
+          <HealthBottom prediction={modelBPrediction} />
 
         </main>
       </div>

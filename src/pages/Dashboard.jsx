@@ -3,6 +3,7 @@ import Greeting from '../components/dashboard/Greeting';
 import TripReadiness from '../components/dashboard/TripReadiness';
 import LoadStatus from '../components/dashboard/LoadStatus';
 import RouteDetails from '../components/dashboard/RouteDetails';
+import ModelOverview from '../components/dashboard/ModelOverview';
 import { Sun, Car, DollarSign, PhoneCall } from 'lucide-react';
 
 export default function Dashboard() {
@@ -15,6 +16,7 @@ export default function Dashboard() {
         <main>
           <Greeting />
           <TripReadiness />
+          <ModelOverview />
           
           {/* Menggunakan Grid untuk split 2 kolom pada layar besar */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -39,7 +39,7 @@ function formatNumber(value, maximumFractionDigits = 0) {
   return new Intl.NumberFormat('id-ID', { maximumFractionDigits }).format(value);
 }
 
-export default function ModelBScenario() {
+export default function ModelBScenario({ onPrediction }) {
   const [scenario, setScenario] = useState(initialScenario);
   const [prediction, setPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,18 +49,23 @@ export default function ModelBScenario() {
     setScenario((current) => ({ ...current, [name]: Number(value) }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const requestPrediction = async (payload) => {
     setError('');
     setIsLoading(true);
     try {
-      const result = await predictModelBScenario(scenario);
+      const result = await predictModelBScenario(payload);
       setPrediction(result);
+      onPrediction?.(result);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Terjadi kesalahan saat memanggil model.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await requestPrediction(scenario);
   };
 
   return (

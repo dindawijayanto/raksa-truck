@@ -1,41 +1,45 @@
-import { CheckCircle2, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, ShieldAlert, ShieldCheck } from 'lucide-react';
 import Card from '../ui/Card';
 
-export default function HealthSidebar() {
-  const checklists = [
-    'Beban Stabil',
-    'Getaran Normal',
-    'Kondisi Jalan Baik'
-  ];
+const riskStyle = {
+  low: { label: 'Risiko Rendah', color: 'text-teal-700', border: 'border-teal-700', icon: ShieldCheck },
+  medium: { label: 'Risiko Sedang', color: 'text-amber-700', border: 'border-amber-500', icon: ShieldAlert },
+  high: { label: 'Risiko Tinggi', color: 'text-rose-700', border: 'border-rose-500', icon: ShieldAlert },
+};
 
+export default function HealthSidebar({ prediction }) {
+  if (!prediction) {
+    return <Card className="flex min-h-80 items-center justify-center text-center text-sm text-slate-500">Memuat output Model B…</Card>;
+  }
+
+  const state = riskStyle[prediction.risk_band];
+  const Icon = state.icon;
+  const checklists = [
+    `Muatan ${Math.round(prediction.derived_features.payload_ratio * 100)}% dari kapasitas payload`,
+    `Jalan ${prediction.derived_features.road_condition}`,
+    prediction.derived_features.overload ? 'Muatan melewati batas berat kotor' : 'Tidak ada flag overload',
+  ];
   return (
-    <Card className="flex flex-col h-full bg-white">
-      <div className="text-center mb-6">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Skor Kesehatan</p>
-        
-        {/* Lingkaran Skor */}
-        <div className="relative w-40 h-40 mx-auto flex items-center justify-center rounded-full border-[12px] border-slate-100 mb-6">
-          <div className="absolute inset-0 rounded-full border-[12px] border-teal-700" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 82%, 0 82%)' }}></div>
-          <div className="text-center z-10 flex flex-col items-center">
-            <span className="text-5xl font-extrabold text-slate-800 leading-none">82</span>
-            <span className="text-[10px] text-slate-400 font-bold mt-1">/ 100</span>
+    <Card className="flex h-full flex-col bg-white">
+      <div className="mb-6 text-center">
+        <p className="mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Skor kesehatan skenario</p>
+        <div className={`relative mx-auto mb-6 flex h-40 w-40 items-center justify-center rounded-full border-[12px] border-slate-100 ${state.border}`}>
+          <div className="z-10 flex flex-col items-center text-center">
+            <span className="text-5xl font-extrabold leading-none text-slate-800">{Math.round(prediction.scenario_health_score)}</span>
+            <span className="mt-1 text-[10px] font-bold text-slate-400">/ 100</span>
           </div>
         </div>
-
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <ShieldCheck size={20} className="text-teal-700" />
-          <h3 className="text-lg font-bold text-teal-700">Sangat Baik</h3>
+        <div className={`mb-2 flex items-center justify-center gap-2 ${state.color}`}>
+          <Icon size={20} />
+          <h3 className="text-lg font-bold">{state.label}</h3>
         </div>
-        <p className="text-xs text-slate-500 px-4 leading-relaxed">
-          Kendaraan dalam kondisi baik dan aman digunakan untuk perjalanan hari ini.
-        </p>
+        <p className="px-4 text-xs leading-relaxed text-slate-500">Skor turunan untuk satu skenario; output ML berstatus simulation-only.</p>
       </div>
-
-      <div className="mt-auto pt-6 border-t border-slate-100 flex flex-col gap-3">
-        {checklists.map((item, idx) => (
-          <div key={idx} className="flex justify-between items-center text-sm font-medium text-slate-700">
-            {item}
-            <CheckCircle2 size={16} className="text-teal-600" />
+      <div className="mt-auto flex flex-col gap-3 border-t border-slate-100 pt-6">
+        {checklists.map((item) => (
+          <div key={item} className="flex items-start justify-between gap-2 text-sm font-medium text-slate-700">
+            <span>{item}</span>
+            <CheckCircle2 size={16} className={state.color} />
           </div>
         ))}
       </div>

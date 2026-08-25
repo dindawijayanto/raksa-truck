@@ -3,6 +3,7 @@ import TripPlan from '../components/route/TripPlan';
 import MapVisualization from '../components/route/MapVisualization';
 import SurfaceProjection from '../components/route/SurfaceProjection';
 import RouteComparison from '../components/route/RouteComparison';
+import ModelARoughnessExplorer from '../components/route/ModelARoughnessExplorer';
 
 export default function Rute() {
   return (
@@ -13,6 +14,7 @@ export default function Rute() {
         <Header />
         
         <main className="mt-6">
+          <ModelARoughnessExplorer />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Kolom Kiri: Peta dan Detail Perjalanan (Ambil 8 Kolom di Desktop) */}
