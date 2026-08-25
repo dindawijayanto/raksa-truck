@@ -27,6 +27,7 @@ const numberFields = [
   ['trip_distance_km', 'Jarak perjalanan', 'km', 1],
   ['cumulative_wear_pct', 'Wear kumulatif', '%', 1],
 ];
+const numericFieldNames = numberFields.map(([name]) => name);
 
 const roadLabels = { smooth: 'Halus', medium: 'Sedang', rough: 'Kasar' };
 const riskStyles = {
@@ -46,7 +47,18 @@ export default function ModelBScenario({ onPrediction }) {
   const [error, setError] = useState('');
 
   const updateNumber = (name, value) => {
-    setScenario((current) => ({ ...current, [name]: Number(value) }));
+    // Keep the text the user is actively editing. Coercing an empty input to
+    // Number('') creates a visible zero and makes values such as 7000 become 07000.
+    setScenario((current) => ({ ...current, [name]: value }));
+  };
+
+  const normalizeNumber = (name) => {
+    setScenario((current) => {
+      const value = current[name];
+      if (value === '') return current;
+      const numericValue = Number(value);
+      return Number.isFinite(numericValue) ? { ...current, [name]: String(numericValue) } : current;
+    });
   };
 
   const requestPrediction = async (payload) => {
@@ -65,7 +77,11 @@ export default function ModelBScenario({ onPrediction }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await requestPrediction(scenario);
+    const payload = {
+      ...scenario,
+      ...Object.fromEntries(numericFieldNames.map((name) => [name, Number(scenario[name])])),
+    };
+    await requestPrediction(payload);
   };
 
   return (
@@ -99,6 +115,8 @@ export default function ModelBScenario({ onPrediction }) {
                 step={step}
                 value={scenario[name]}
                 onChange={(event) => updateNumber(name, event.target.value)}
+                onBlur={() => normalizeNumber(name)}
+                required
               />
               <span className="whitespace-nowrap text-[10px] font-medium text-slate-400">{unit}</span>
             </div>
