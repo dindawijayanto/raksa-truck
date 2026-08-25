@@ -1,16 +1,59 @@
-# React + Vite
+# Raksa Truck — Model B integration
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Raksa Truck adalah UI React/Vite untuk dashboard kendaraan. Repository ini kini menyertakan API FastAPI dan weight native CatBoost untuk menjalankan **Model B scenario estimate** langsung dari halaman **Kesehatan**.
 
-Currently, two official plugins are available:
+## Batas penggunaan model
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Endpoint menghasilkan estimasi `damage_increment_pct`, `rul_km`, dan probabilitas `service_due_1000km` dari skenario muatan, rute, dan kondisi kendaraan. Weight CatBoost dilatih pada benchmark physics-informed sintetis, sehingga seluruh respons selalu berstatus **`simulation_only`**. Jangan gunakan hasil sebagai keputusan maintenance otomatis atau klaim prediksi kerusakan armada nyata.
 
-## React Compiler
+## Struktur
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```text
+src/components/health/ModelBScenario.jsx  Panel input dan hasil prediksi di UI
+backend/app/main.py                        API FastAPI
+backend/app/model_service.py               Pemuatan weight dan feature engineering
+backend/models/                            CatBoost native .cbm + kontrak model
+```
 
-## Expanding the ESLint configuration
+## Menjalankan lokal
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Terminal 1 — API:
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\uvicorn app.main:app --reload --port 8000
+```
+
+Terminal 2 — UI:
+
+```bash
+npm install
+npm run dev
+```
+
+Buka `http://localhost:5173/kesehatan`, masukkan parameter perjalanan, lalu tekan **Hitung skenario**. Saat development, Vite meneruskan permintaan `/api` ke `http://localhost:8000`. Dokumentasi interaktif API tersedia pada `http://localhost:8000/docs`.
+
+Untuk hosting frontend dan API pada origin berbeda, salin `.env.example` ke `.env.local` dan isi `VITE_MODEL_API_URL` dengan URL endpoint API publik.
+
+## Endpoint
+
+`POST /api/v1/model-b/predict`
+
+Contoh payload:
+
+```json
+{
+  "truck_tare_kg": 6000,
+  "gross_weight_limit_kg": 16000,
+  "payload_kg": 6850,
+  "axle_count": 3,
+  "road_iri_m_per_km": 3.2,
+  "speed_kmh": 48,
+  "suspension_type": "leaf",
+  "tire_pressure_ratio": 1.0,
+  "trip_distance_km": 85,
+  "cumulative_wear_pct": 28
+}
+```

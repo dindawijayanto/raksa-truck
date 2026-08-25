@@ -1,0 +1,52 @@
+{
+  "model_name": "model_b_catboost_native_v1",
+  "model_family": "catboost",
+  "model_status": "simulation_only",
+  "feature_columns": [
+    "gross_weight_ratio",
+    "payload_ratio",
+    "axle_count",
+    "road_iri_m_per_km",
+    "speed_kmh",
+    "suspension_is_air",
+    "tire_pressure_ratio",
+    "trip_distance_km",
+    "dynamic_load_coefficient",
+    "cumulative_wear_pct"
+  ],
+  "targets": {
+    "damage_regressor": "log1p(damage_increment_pct)",
+    "rul_regressor": "log1p(rul_km)",
+    "service_classifier": "service_due_1000km"
+  },
+  "simulation_config": {
+    "templates": [
+      {
+        "name": "light_generic",
+        "gross_weight_limit_t": 8.0,
+        "tare_weight_t": 3.0,
+        "axle_count": 2
+      },
+      {
+        "name": "medium_generic",
+        "gross_weight_limit_t": 16.0,
+        "tare_weight_t": 6.0,
+        "axle_count": 3
+      },
+      {
+        "name": "heavy_generic",
+        "gross_weight_limit_t": 30.0,
+        "tare_weight_t": 12.0,
+        "axle_count": 4
+      }
+    ],
+    "fleet_units_per_template": 20,
+    "trips_per_unit": 250,
+    "road_profile_seeds": 3,
+    "damage_exponent": 3.5,
+    "nominal_service_life_km": 10000.0,
+    "service_due_horizon_km": 1000.0,
+    "random_seed": 42
+  },
+  "restriction": "Model outputs are scenario estimates calibrated only to physics-informed synthetic labels, not observed maintenance outcomes."
+}

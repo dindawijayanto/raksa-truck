@@ -8,6 +8,13 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.venv/
+.api-venv/
+backend/.venv/
+backend/pip-install*.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
 dist
 dist-ssr
 *.local

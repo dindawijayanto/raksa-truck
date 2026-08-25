@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CircleDot, MapPin, ArrowRightLeft, Activity } from 'lucide-react';
 import Card from '../ui/Card';
 

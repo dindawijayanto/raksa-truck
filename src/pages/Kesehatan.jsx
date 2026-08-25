@@ -2,6 +2,7 @@ import Header from '../components/layout/Header';
 import HealthSidebar from '../components/health/HealthSidebar';
 import HealthDetails from '../components/health/HealthDetails';
 import HealthBottom from '../components/health/HealthBottom';
+import ModelBScenario from '../components/health/ModelBScenario';
 
 export default function Kesehatan() {
   return (
@@ -14,9 +15,11 @@ export default function Kesehatan() {
           <div className="mb-8">
             <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Kesehatan Kendaraan</h1>
             <p className="text-slate-500 text-sm max-w-xl">
-              AI menganalisis kondisi kendaraan berdasarkan beban, pola getaran, kualitas jalan, dan riwayat perjalanan.
+              Jalankan skenario untuk memperoleh estimasi wear Model B dari muatan, kondisi jalan, dan riwayat penggunaan.
             </p>
           </div>
+
+          <ModelBScenario />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Sidebar Kiri (Ambil 4 Kolom) */}
