@@ -1,0 +1,15 @@
+{
+  "target_sampling_hz": null,
+  "filter_cutoff_hz": 0.5,
+  "filter_order": 4,
+  "segment_length_m": 20.0,
+  "min_segment_coverage_m": 18.0,
+  "min_speed_kmh": 5.0,
+  "max_gps_tolerance_s": 1.5,
+  "max_median_gps_accuracy_m": 10.0,
+  "min_samples_per_segment": 50,
+  "max_moving_sample_gap_s": 0.25,
+  "min_model_segments": 15,
+  "cluster_count": 3,
+  "random_seed": 42
+}

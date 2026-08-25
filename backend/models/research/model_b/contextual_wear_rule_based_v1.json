@@ -1,0 +1,24 @@
+{
+  "model_name": "contextual_wear_rule_based_v1",
+  "model_type": "transparent_rule_based",
+  "deployment_status": "usable after live load and service-distance inputs are connected",
+  "weights": {
+    "load_weight": 0.6,
+    "roughness_weight": 0.4,
+    "interaction_weight": 0.2
+  },
+  "formula": {
+    "context_score": "100 * (load_weight * min(load_kg/load_limit_kg, 1) + roughness_weight * relative_roughness_score/100)",
+    "wear_multiplier": "1 + load_weight * load_ratio + roughness_weight * roughness_ratio + interaction_weight * load_ratio * roughness_ratio"
+  },
+  "runtime_parameters": {
+    "load_kg": 4000.0,
+    "load_limit_kg": 8000.0,
+    "service_interval_km": 10000.0,
+    "load_weight": 0.6,
+    "roughness_weight": 0.4,
+    "interaction_weight": 0.2,
+    "service_alert_score": 85.0
+  },
+  "limitations": "The current local run uses a synthetic debug load profile; replace it with load-cell data before real service decisions."
+}

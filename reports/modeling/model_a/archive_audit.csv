@@ -1,0 +1,6 @@
+archive_name,status,reason,session_id
+Data (1).zip,processed,,20260811_131526_089
+session_20260811_182606_294.zip,processed,,20260811_182606_294
+session_20260811_212352_867 (1).zip,processed,,20260811_212352_867
+session_20260811_212352_867.zip,skipped,not a valid ZIP archive,
+session_20260811_224202_660.zip,processed,,20260811_224202_660

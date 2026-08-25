@@ -5,6 +5,9 @@ Raksa Truck adalah UI React/Vite untuk dashboard kendaraan. Repository ini kini 
 - **Model A**: output empat sesi sensor (999 segmen total) ditampilkan secara dinamis pada halaman **Dashboard** dan **Rute**. Skor kekasaran hanya dapat dibandingkan di dalam sesi yang sama.
 - **Model B**: halaman **Kesehatan** mengirim skenario truk dan rute ke API, lalu menampilkan estimasi wear dari weight CatBoost.
 
+Dokumentasi proposal, notebook, kode reproduksi, laporan eksperimen, dan
+bobot benchmark tersedia di [`docs/modeling/README.md`](docs/modeling/README.md).
+
 ## Batas penggunaan model
 
 Endpoint menghasilkan estimasi `damage_increment_pct`, `rul_km`, dan probabilitas `service_due_1000km` dari skenario muatan, rute, dan kondisi kendaraan. Weight CatBoost dilatih pada benchmark physics-informed sintetis, sehingga seluruh respons selalu berstatus **`simulation_only`**. Jangan gunakan hasil sebagai keputusan maintenance otomatis atau klaim prediksi kerusakan armada nyata.

@@ -1,0 +1,113 @@
+{
+  "model_name": "model_b_synthetic_boosting_benchmark_v1",
+  "deployment_status": "simulation_only",
+  "model_families": [
+    "catboost",
+    "lightgbm",
+    "xgboost"
+  ],
+  "target_models_per_family": [
+    "damage increment regressor",
+    "RUL regressor",
+    "service-horizon classifier"
+  ],
+  "feature_columns": [
+    "gross_weight_ratio",
+    "payload_ratio",
+    "axle_count",
+    "road_iri_m_per_km",
+    "speed_kmh",
+    "suspension_is_air",
+    "tire_pressure_ratio",
+    "trip_distance_km",
+    "dynamic_load_coefficient",
+    "cumulative_wear_pct"
+  ],
+  "evaluation_protocol": {
+    "split": "GroupShuffleSplit by fleet_unit_id",
+    "train_rows": 11250,
+    "test_rows": 3750,
+    "held_out_fleet_units": 15,
+    "selection_rule": "highest test_r2_rul, then highest test_pr_auc_service_due, then lowest test_mae_rul_km"
+  },
+  "champion_on_synthetic_test": {
+    "model_family": "catboost",
+    "test_r2_damage_increment": 0.9997410846776613,
+    "test_mae_damage_increment_pct": 0.008431064109692257,
+    "test_r2_rul": 0.9997288078923622,
+    "test_mae_rul_km": 148.7992253579109,
+    "test_rmse_rul_km": 468.0448601392241,
+    "test_pr_auc_service_due": 0.9975155336950988,
+    "test_precision_service_due": 0.9367088607594937,
+    "test_recall_service_due": 0.9866666666666667,
+    "training_seconds": 17.656624756753445
+  },
+  "metrics": [
+    {
+      "model_family": "catboost",
+      "test_r2_damage_increment": 0.9997410846776613,
+      "test_mae_damage_increment_pct": 0.008431064109692257,
+      "test_r2_rul": 0.9997288078923622,
+      "test_mae_rul_km": 148.7992253579109,
+      "test_rmse_rul_km": 468.0448601392241,
+      "test_pr_auc_service_due": 0.9975155336950988,
+      "test_precision_service_due": 0.9367088607594937,
+      "test_recall_service_due": 0.9866666666666667,
+      "training_seconds": 17.656624756753445
+    },
+    {
+      "model_family": "lightgbm",
+      "test_r2_damage_increment": 0.9992493925003963,
+      "test_mae_damage_increment_pct": 0.014615514113426296,
+      "test_r2_rul": 0.998729161727381,
+      "test_mae_rul_km": 291.83465153595,
+      "test_rmse_rul_km": 1013.1974777775654,
+      "test_pr_auc_service_due": 0.9970907856419833,
+      "test_precision_service_due": 0.9577922077922078,
+      "test_recall_service_due": 0.9833333333333333,
+      "training_seconds": 4.803137555718422
+    },
+    {
+      "model_family": "xgboost",
+      "test_r2_damage_increment": 0.9990058395729605,
+      "test_mae_damage_increment_pct": 0.015366104037647495,
+      "test_r2_rul": 0.9982538774585592,
+      "test_mae_rul_km": 306.54511535690915,
+      "test_rmse_rul_km": 1187.644102873907,
+      "test_pr_auc_service_due": 0.9972320614104521,
+      "test_precision_service_due": 0.948220064724919,
+      "test_recall_service_due": 0.9766666666666667,
+      "training_seconds": 6.095348868519068
+    }
+  ],
+  "simulation_config": {
+    "templates": [
+      {
+        "name": "light_generic",
+        "gross_weight_limit_t": 8.0,
+        "tare_weight_t": 3.0,
+        "axle_count": 2
+      },
+      {
+        "name": "medium_generic",
+        "gross_weight_limit_t": 16.0,
+        "tare_weight_t": 6.0,
+        "axle_count": 3
+      },
+      {
+        "name": "heavy_generic",
+        "gross_weight_limit_t": 30.0,
+        "tare_weight_t": 12.0,
+        "axle_count": 4
+      }
+    ],
+    "fleet_units_per_template": 20,
+    "trips_per_unit": 250,
+    "road_profile_seeds": 3,
+    "damage_exponent": 3.5,
+    "nominal_service_life_km": 10000.0,
+    "service_due_horizon_km": 1000.0,
+    "random_seed": 42
+  },
+  "restriction": "These metrics measure fidelity to generated simulation labels, never field-validated maintenance performance. Do not deploy before validation against real maintenance records."
+}

@@ -1,0 +1,19 @@
+{
+  "dataset": "EVIoT-PredictiveMaint Dataset (external benchmark)",
+  "features": [
+    "Load_Weight",
+    "Route_Roughness",
+    "Distance_Traveled",
+    "Driving_Speed"
+  ],
+  "target": "RUL",
+  "rows_used": 100000,
+  "metrics": {
+    "test_mae_rul": 59.546888779572654,
+    "test_rmse_rul": 84.61800334476885,
+    "test_r2_rul": -0.0002768603820313409,
+    "train_rows": 80000.0,
+    "test_rows": 20000.0
+  },
+  "deployment_note": "Not deployed to local trips; local load-cell and maintenance labels are still required."
+}
